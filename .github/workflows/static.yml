@@ -31,6 +31,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install jupyter
+        run: |
+          pip install jupyter
+          jupyter --version
+      - name: Convert ipynb to html
+        run: |
+          mkdir -p docs
+          for file in *.ipynb; do
+            jupyter nbconvert --to html --output-dir=docs --output-base=$file $file
+          done
+      - name: Move files to root
+        run: |
+          for file in docs/*.html; do
+            mv $file ${file#docs/}
+          done
+          rm -rf docs/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
